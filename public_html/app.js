@@ -47,7 +47,7 @@ var div=$('#data');
 //console.log(request);
 
 cities.on('change',function(){
-    
+    $('#info>p,#info>br').detach();
     var request=$.ajax({url : "https://api.jcdecaux.com/vls/v1/stations?contract="+cities[0].value+"&apiKey="+apiKey},
                    {method : "GET" },
                    {accepts : 'application/json' });
@@ -107,26 +107,28 @@ for(var i in tabStation)
                  tabStation[i].available_bikes
     });
     var info=$('#info');
-    marker.addListener('click', function() {
-        if($('p').appendTo(info))
-        {
-            $('p').remove();
-        }
-        
-        info.append('<p>Statut: '+(tabStation[i].status==="OPEN"? "Ouvert" : "Fermé")+'</p>');
-        info.append('<p>Numero de la station: '+tabStation[i].number+'</p>');
-        info.append('<p>Nom de la station: '+tabStation[i].name+'</p>');
-        info.append('<p>Adresse: '+tabStation[i].address+'</p>');
-        info.append('<p>Location par carte: '+(tabStation[i].banking? "Oui" : "Non")+'</p>');
-        info.append('<p>Nombre de vélos dispos: '+tabStation[i].available_bikes+'</p>');
-        info.append('<p>Nombre de points d\'attaches dispos: '+tabStation[i].available_bike_stands+'</p>');
-        info.append('<p>Nombre total de points d\'attaches: '+tabStation[i].bike_stands+'</p>');
-        info.append('<br/>');
-        
-        ;
-  });
+    //on passe a bind l'objet tabStation afin de pouvoir réecrire ses attributs
+    //dans la fonction click
+    marker.addListener('click', click.bind(null,tabStation[i])
+            
+    );
     
 }
 
 }
+function click(marker) {
+       $('#info>p,#info>br').remove();
+       var info=$('#info');
+        info.append('<p>Statut: '+(marker.status==="OPEN"? "Ouvert" : "Fermé")+'</p>');
+        info.append('<p>Numero de la station: '+marker.number+'</p>');
+        info.append('<p>Nom de la station: '+marker.name+'</p>');
+        info.append('<p>Adresse: '+marker.address+'</p>');
+        info.append('<p>Location par carte: '+(marker.banking? "Oui" : "Non")+'</p>');
+        info.append('<p>Nombre de vélos dispos: '+marker.available_bikes+'</p>');
+        info.append('<p>Nombre de points d\'attaches dispos: '+marker.available_bike_stands+'</p>');
+        info.append('<p>Nombre total de points d\'attaches: '+marker.bike_stands+'</p>');
+        info.append('<br/>');
+        
+        ;
+  }
 
