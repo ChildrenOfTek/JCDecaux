@@ -107,21 +107,8 @@ for(var i in tabStation)
                  tabStation[i].available_bikes
     });
     var info=$('#info');
-    marker.addListener('click', function() {
-        if($('p').appendTo(info))
-        {
-            $('p').remove();
-        }
-        
-        info.append('<p>Statut: '+(tabStation[i].status==="OPEN"? "Ouvert" : "Fermé")+'</p>');
-        info.append('<p>Numero de la station: '+tabStation[i].number+'</p>');
-        info.append('<p>Nom de la station: '+tabStation[i].name+'</p>');
-        info.append('<p>Adresse: '+tabStation[i].address+'</p>');
-        info.append('<p>Location par carte: '+(tabStation[i].banking? "Oui" : "Non")+'</p>');
-        info.append('<p>Nombre de vélos dispos: '+tabStation[i].available_bikes+'</p>');
-        info.append('<p>Nombre de points d\'attaches dispos: '+tabStation[i].available_bike_stands+'</p>');
-        info.append('<p>Nombre total de points d\'attaches: '+tabStation[i].bike_stands+'</p>');
-        info.append('<br/>');
+    marker.addListener('click', function(event) {
+        console.log(event);
         
         ;
   });
