@@ -24,6 +24,7 @@ var request=$.ajax({url : "https://api.jcdecaux.com/vls/v1/contracts?apiKey="+ap
         }
         tableauContracts.sort();
      }
+     city.append('<option selected>Choisissez une ville</option>');
      //console.log(tableauContracts);
      for(var j in tableauContracts)
      {
@@ -60,7 +61,7 @@ cities.on('change',function(){
     {
         tabStation.push(data[i]);
     }
-    
+    div.append('<p>Choisissez une station</p>');
     //console.dir(tabStation);
     div.append('<h1>Stations pour la ville: '+cities[0].value+'</h1>');
     for(var j in tabStation)
@@ -85,16 +86,43 @@ function initMap(tabStation) {
 console.dir(tabStation);
     var googleKey="AIzaSyAh9i4u08CVKJTe72g7RR0-smW4CPmEohw";
     document.getElementById('map').style.display="block";
-    initialize(tabStation);
-    
-}
-function initialize(tabStation){
+
 // Create a map object and specify the DOM element for display.
 map = new google.maps.Map(document.getElementById('map'), {
 center: {lat: tabStation[0].position.lat, lng: tabStation[0].position.lng},
-scrollwheel: false,
+scrollwheel: true,
 zoom: 12
 });
+//////////////////////////////////////////////////////////////////////
+var infoWindow = new google.maps.InfoWindow({map: map});
+
+  // Try HTML5 geolocation.
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+
+      infoWindow.setPosition(pos);
+      infoWindow.setContent('Vous êtes ici');
+      
+    }, function() {
+      handleLocationError(true, infoWindow);
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    handleLocationError(false, infoWindow, map.getCenter());
+  }
+//////////////////////////////////////////////////////////////////////
+function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+  infoWindow.setPosition(pos);
+  infoWindow.setContent(browserHasGeolocation ?
+                        'Error: The Geolocation service failed.' :
+                        'Error: Your browser doesn\'t support geolocation.');
+}
+
+/////////////////////////////////////////////////////////////////////
 for(var i in tabStation)
 {
     //console.dir(tabStation);
@@ -110,12 +138,22 @@ for(var i in tabStation)
     //on passe a bind l'objet tabStation afin de pouvoir réecrire ses attributs
     //dans la fonction click
     marker.addListener('click', click.bind(null,tabStation[i])
-            
     );
+    var contentString="lol";
     
-}
+    marker.addListener('click', function(){
+        //console.dir(marker.latLng);
+
+var infowindow2=new google.maps.InfoWindow({
+  content: contentString
+  });
+    //var pos2={lat: marker.latLng.lat(),lng:  marker.latLng.lng()};
+    infowindow2.open(map,marker);
+    });
 
 }
+}
+
 function click(marker) {
        $('#info>p,#info>br').remove();
        var info=$('#info');
