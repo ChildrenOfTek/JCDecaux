@@ -61,7 +61,6 @@ cities.on('change',function(){
     {
         tabStation.push(data[i]);
     }
-    div.append('<p>Choisissez une station</p>');
     //console.dir(tabStation);
     div.append('<h1>Stations pour la ville: '+cities[0].value+'</h1>');
     for(var j in tabStation)
@@ -90,11 +89,13 @@ console.dir(tabStation);
 // Create a map object and specify the DOM element for display.
 map = new google.maps.Map(document.getElementById('map'), {
 center: {lat: tabStation[0].position.lat, lng: tabStation[0].position.lng},
-scrollwheel: true,
-zoom: 12
+scrollwheel: false,
+zoom: 13
 });
 //////////////////////////////////////////////////////////////////////
-var infoWindow = new google.maps.InfoWindow({map: map});
+/////////////////Geoloc but messing with centering the map on the city
+
+/*var infoWindow = new google.maps.InfoWindow({map: map});
 
   // Try HTML5 geolocation.
   if (navigator.geolocation) {
@@ -108,7 +109,7 @@ var infoWindow = new google.maps.InfoWindow({map: map});
       infoWindow.setContent('Vous êtes ici');
       
     }, function() {
-      handleLocationError(true, infoWindow);
+      handleLocationError(true, infoWindow, map.getCenter());
     });
   } else {
     // Browser doesn't support Geolocation
@@ -121,15 +122,15 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                         'Error: The Geolocation service failed.' :
                         'Error: Your browser doesn\'t support geolocation.');
 }
-
+*/
 /////////////////////////////////////////////////////////////////////
 for(var i in tabStation)
 {
     //console.dir(tabStation);
-    var Lng={lat: tabStation[i].position.lat, lng: tabStation[i].position.lng};
+    var pos={lat: tabStation[i].position.lat, lng: tabStation[i].position.lng};
     
     var marker = new google.maps.Marker({
-        position: Lng,
+        position: pos,
         map: map,
          title: 'Nom de la station: '+tabStation[i].name+'\nNombre de stands: '+tabStation[i].bike_stands+'\nNombre de velos restants: '+
                  tabStation[i].available_bikes
@@ -139,18 +140,22 @@ for(var i in tabStation)
     //dans la fonction click
     marker.addListener('click', click.bind(null,tabStation[i])
     );
-    var contentString="lol";
+    var contenuInfoBulle='<p>Statut: '+(tabStation[i].status==="OPEN"? "Ouvert" : "Fermé")+'</p>\
+                          <p>Nom de la station: '+tabStation[i].name+'</p>\
+                          <p>Location par carte: '+(tabStation[i].banking? "Oui" : "Non")+'</p>\
+                          <p>Nombre de vélos dispos: '+tabStation[i].available_bikes+'</p>\
+                          <p>Nombre de points d\'attaches dispos: '+tabStation[i].available_bike_stands+'</p>\
+                          <p>Nombre total de points d\'attaches: '+tabStation[i].bike_stands+'</p>\
+                          <p>Adresse: '+tabStation[i].address+'</p>\
+                          <p>Numero de la station: '+tabStation[i].number+'</p>';
     
-    marker.addListener('click', function(){
-        //console.dir(marker.latLng);
-
-var infowindow2=new google.maps.InfoWindow({
-  content: contentString
-  });
-    //var pos2={lat: marker.latLng.lat(),lng:  marker.latLng.lng()};
-    infowindow2.open(map,marker);
-    });
-
+    var infoBulle = new google.maps.InfoWindow({
+	content: contenuInfoBulle
+});
+    
+    google.maps.event.addListener(marker, 'click', function() {
+	infoBulle.open(map, this);
+});
 }
 }
 

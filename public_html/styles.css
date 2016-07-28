@@ -1,4 +1,7 @@
 html, body { height: 100%; margin: 0; padding: 0; }
-.container{ height:50%;display:flex;}
-  #map { height: 100%; width:48%; display:none; }
-  #info { height: 100%; width:48%;padding-left:50px; }
+.container{ height:70%;display:flex;}
+  #map { height: 100%; width:100%; display:none; }
+
+  .gm-style .gm-style-iw {
+   font-size: 10px;
+}
